@@ -80,6 +80,7 @@ class Expirer(object):
                     diff = self._strToDateTime(g) - self._strToDateTime(d)
                     result.append([g, 'keep', 'for desired %s with delta %s' % (
                         d, diff)])
+                    del got[j]
                     break
 
         return result
