@@ -2,8 +2,10 @@
 # vi:si:et:sw=4:sts=4:ts=4
 
 import re
+import time
+import datetime
 
-from dirvickle import expirerule
+from dirvickle import expirerule, vault
 
 _SECTION_RE = re.compile(r'^(?P<section>\S*):')
 
@@ -34,5 +36,50 @@ class Parser(object):
                 continue
 
             if self._state == 'EXPIRERULE':
-                print 'rule', line
                 self.rules.add(line)
+
+
+class Expirer(object):
+
+    def __init__(self, config, vaultPath):
+        handle = open(config)
+        output = handle.read()
+        handle.close()
+
+        self.parser = Parser(output)
+        self.vault = vault.Vault(vaultPath)
+
+    def _strToDateTime(self, text):
+        t = time.strptime(text, "%Y%m%d%H%M%S")
+        dt = datetime.datetime.fromtimestamp(time.mktime(t))
+        return dt
+
+    def getImages(self):
+        """
+        @rtype: list of name, decision, reason
+        """
+        got = self.vault.getImages()
+        result = []
+
+        first = self._strToDateTime(got[0])
+        last = self._strToDateTime(got[-1])
+
+        desired = self.parser.rules.getImages(first, last)
+
+        # always keep the first one we have
+        result.append([got[0], 'keep', 'first one is always kept'])
+        del got[0]
+
+        for i, (d, rules) in enumerate(desired):
+            for j, g in enumerate(got[:]):
+                if g < d:
+                    result.append([g, 'delete',
+                        'not needed for desired %d at %s' % (i, d)])
+                    del got[j]
+                else:
+                    diff = self._strToDateTime(g) - self._strToDateTime(d)
+                    result.append([g, 'keep', 'for desired %s with delta %s' % (
+                        d, diff)])
+                    break
+
+        return result

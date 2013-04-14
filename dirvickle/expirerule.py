@@ -53,8 +53,8 @@ class Rules(object):
 
         @type first: C{datetime.datetime}
 
-        @rtype:   list of (str, str)
-        @returns: list of datestring, rule description
+        @rtype:   list of (str, list of str)
+        @returns: list of datestring, rule descriptions
         """
 
         if not today:
