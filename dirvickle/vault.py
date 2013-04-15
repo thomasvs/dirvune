@@ -1,4 +1,4 @@
-# -*- Mode: Python; test-case-name: dirvickle.test.test_vault -*-
+# -*- Mode: Python; test-case-name: dirvune.test.test_vault -*-
 # vi:si:et:sw=4:sts=4:ts=4
 
 import os

@@ -1,4 +1,4 @@
-# -*- Mode: Python; test-case-name: dirvickle.test.test_expire -*-
+# -*- Mode: Python; test-case-name: dirvune.test.test_expire -*-
 # vi:si:et:sw=4:sts=4:ts=4
 
 
@@ -7,7 +7,7 @@ import datetime
 
 import unittest
 
-from dirvickle import expire
+from dirvune import expire
 
 
 class ParserTestCase(unittest.TestCase):

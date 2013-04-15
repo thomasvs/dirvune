@@ -1,4 +1,4 @@
-# -*- Mode: Python; test-case-name: dirvickle.test.test_expirerule -*-
+# -*- Mode: Python; test-case-name: dirvune.test.test_expirerule -*-
 # vi:si:et:sw=4:sts=4:ts=4
 
 
@@ -6,7 +6,7 @@
 import string
 import datetime
 
-from dirvickle import perl
+from dirvune import perl
 
 def dt2e(dt):
     return int(dt.strftime("%s"))

@@ -1,11 +1,11 @@
-# -*- Mode: Python; test-case-name: dirvickle.test.test_expire -*-
+# -*- Mode: Python; test-case-name: dirvune.test.test_expire -*-
 # vi:si:et:sw=4:sts=4:ts=4
 
 import re
 import time
 import datetime
 
-from dirvickle import expirerule, vault
+from dirvune import expirerule, vault
 
 _SECTION_RE = re.compile(r'^(?P<section>\S*):\s*(?P<value>.*)$')
 

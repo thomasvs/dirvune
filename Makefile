@@ -1,4 +1,4 @@
 all:
-	cd dirvickle/test/vault && chmod 0700 \
+	cd dirvune/test/vault && chmod 0700 \
 		20130106030000 20130131030000 20130223030000 20130306030000 \
 		20130311030000

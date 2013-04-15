@@ -1,10 +1,10 @@
-# -*- Mode: Python; test-case-name: dirvickle.test.test_expirerule -*-
+# -*- Mode: Python; test-case-name: dirvune.test.test_expirerule -*-
 # vi:si:et:sw=4:sts=4:ts=4
 
 import datetime
 import unittest
 
-from dirvickle import expirerule
+from dirvune import expirerule
 
 
 
