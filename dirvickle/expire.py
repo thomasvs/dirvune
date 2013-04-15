@@ -59,6 +59,7 @@ class Expirer(object):
         @rtype: list of name, decision, reason
         """
         got = self.vault.getImages()
+        print got
         result = []
 
         first = self._strToDateTime(got[0])
@@ -70,17 +71,23 @@ class Expirer(object):
         result.append([got[0], 'keep', 'first one is always kept'])
         del got[0]
 
-        for i, (d, rules) in enumerate(desired):
-            for j, g in enumerate(got[:]):
-                if g < d:
-                    result.append([g, 'delete',
-                        'not needed for desired %d at %s' % (i, d)])
-                    del got[j]
-                else:
-                    diff = self._strToDateTime(g) - self._strToDateTime(d)
-                    result.append([g, 'keep', 'for desired %s with delta %s' % (
-                        d, diff)])
-                    del got[j]
-                    break
+        j = 0
+        d = None
+
+        for i, g in enumerate(got):
+            if not d:
+                (d, rules) = desired.pop(0)
+                j += 1
+
+            if g < d:
+                result.append([g, 'delete',
+                    'not needed for desired %d at %s' % (j, d)])
+                print result[-1]
+            else:
+                diff = self._strToDateTime(g) - self._strToDateTime(d)
+                result.append([g, 'keep', 'for desired %s with delta %s' % (
+                    d, diff)])
+                print result[-1]
+                d = None
 
         return result

@@ -43,6 +43,7 @@ class ExpirerTestCase(unittest.TestCase):
         delete = [i for i in result if i[1] == 'delete']
 
         #self.assertEquals(len(result), 57)
+        self.assertEquals(len(result), 38)
         #self.assertEquals(len(keep), 21)
         #self.assertEquals(len(delete), 36)
 
