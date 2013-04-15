@@ -25,7 +25,7 @@ class ParserTestCase(unittest.TestCase):
             last=datetime.datetime(2012, 11, 1),
             today=datetime.datetime(2012, 11, 11))
 
-        self.assertEquals(len(ret), 21)
+        self.assertEquals(len(ret), 26)
 
 
 class ExpirerTestCase(unittest.TestCase):
@@ -42,19 +42,15 @@ class ExpirerTestCase(unittest.TestCase):
         keep = [i for i in result if i[1] == 'keep']
         delete = [i for i in result if i[1] == 'delete']
 
-        #self.assertEquals(len(result), 57)
-        self.assertEquals(len(result), 38)
-        #self.assertEquals(len(keep), 21)
-        #self.assertEquals(len(delete), 36)
+        self.assertEquals(len(result), 40)
+        self.assertEquals(len(keep), 19)
+        self.assertEquals(len(delete), 21)
 
-        #self.assertEquals(keep[0][0], '20111011030000')
-        #self.assertEquals(keep[-1][0], '20130323030000')
+        self.assertEquals(keep[0][0], '20111011030000')
+        self.assertEquals(keep[-1][0], '20130412030000')
 
-        #self.assertEquals(delete[0][0], '20111111030000')
-        #self.assertEquals(delete[-1][0], '20130312030000')
+        self.assertEquals(delete[0][0], '20111111030000')
+        self.assertEquals(delete[-1][0], '20130118030000')
 
-        import pprint
-        pprint.pprint(result)
-
-        print "rm %s" % " ".join([d[0] for d in delete])
+        # print "rm %s" % " ".join([d[0] for d in delete])
 

@@ -7,9 +7,9 @@ import datetime
 
 from dirvickle import expirerule, vault
 
-_SECTION_RE = re.compile(r'^(?P<section>\S*):')
+_SECTION_RE = re.compile(r'^(?P<section>\S*):\s*(?P<value>.*)$')
 
-states = ['CONFIG', 'EXPIRERULE']
+states = ['CONFIG', 'EXPIREDEFAULT', 'EXPIRERULE']
 
 class Parser(object):
 
@@ -31,6 +31,10 @@ class Parser(object):
                 section = m.group('section')
                 if section == 'expire-rule':
                     self._state = 'EXPIRERULE'
+                elif section == 'expire-default':
+                    self._state = 'EXPIREDEFAULT'
+                    value = m.group('value')
+                    self.rules.add('* * * * * %s' % value)
                 else:
                     self._state = 'CONFIG'
                 continue
@@ -56,10 +60,9 @@ class Expirer(object):
 
     def getImages(self):
         """
-        @rtype: list of name, decision, reason
+        @rtype: list of name, decision, list of reason
         """
         got = self.vault.getImages()
-        print got
         result = []
 
         first = self._strToDateTime(got[0])
@@ -68,7 +71,7 @@ class Expirer(object):
         desired = self.parser.rules.getImages(first, last)
 
         # always keep the first one we have
-        result.append([got[0], 'keep', 'first one is always kept'])
+        result.append([got[0], 'keep', ['first one is always kept']])
         del got[0]
 
         j = 0
@@ -81,13 +84,19 @@ class Expirer(object):
 
             if g < d:
                 result.append([g, 'delete',
-                    'not needed for desired %d at %s' % (j, d)])
-                print result[-1]
+                    ['not needed for desired %d at %s' % (j, d)]])
             else:
                 diff = self._strToDateTime(g) - self._strToDateTime(d)
-                result.append([g, 'keep', 'for desired %s with delta %s' % (
-                    d, diff)])
-                print result[-1]
-                d = None
+                result.append([g, 'keep', ['for desired %s with delta %s' % (
+                    d, diff)]])
+
+                # skip through desireds as long as our got is later
+                while g >= d and desired:
+                    (d, rules) = desired.pop(0)
+                    diff = self._strToDateTime(g) - self._strToDateTime(d)
+                    result[-1][2].append(['for desired %s with delta %s' % (
+                        d, diff)])
+                    if not desired:
+                        break
 
         return result
