@@ -1,0 +1,68 @@
+#!/usr/bin/python
+
+import os
+import sys
+import glob
+import optparse
+
+
+from dirvune import expire, vault
+
+def main():
+    parser = optparse.OptionParser()
+
+    parser.add_option("-c", "--config", dest="config",
+        default="/etc/dirvish/master.conf",
+        help="configuration file")
+
+    parser.add_option("-V", "--vault", dest="vault",
+        help="restrict pruning to the specified vault")
+
+    parser.add_option("-n", "--dry-run", action="store_true",
+        dest="dry_run",
+        help="perform a trial run with no changes made")
+    parser.add_option("", "--no-run", action="store_true",
+        dest="dry_run",
+        help="perform a trial run with no changes made")
+
+    parser.add_option("-q", "--quiet", action="store_true",
+        dest="quiet",
+        help="Run quietly, only report errors.")
+
+    (options, args) = parser.parse_args()
+
+    if options.quiet:
+        stdout = open('/dev/null', 'w')
+    else:
+        stdout = sys.stdout
+
+    parser = expire.Parser(open(options.config).read())
+
+    vaults = []
+    for bank in parser.banks:
+        vaults.extend([os.path.dirname(d)
+            for d in glob.glob('%s/*/dirvish' % bank)])
+
+
+    for path in vaults:
+        stdout.write('Examining vault in %s\n' % path)
+        v = vault.Vault(path)
+        stdout.write('Vault has %d good images\n' % len(v.getImages()))
+        expirer = expire.Expirer(options.config, path)
+        result = expirer.getImages()
+
+        keep = [i for i in result if i[1] == 'keep']
+        delete = [i for i in result if i[1] == 'delete']
+
+        stdout.write('Keeping %d and deleting %d images\n' % (
+            len(keep), len(delete)))
+
+        for i, _, reasons in delete:
+            p = os.path.join(path, i)
+            if options.dry_run:
+                stdout.write('Dry run, not deleting %s\n' % p)
+            else:
+                stdout.write('Deleting %s\n' % p)
+                assert len(p) > 2
+                os.system('rm -rf %s' % p)
+main()
