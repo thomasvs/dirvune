@@ -25,6 +25,11 @@ class Vault:
             if c == 'dirvish':
                 continue
 
+            try:
+                int(c)
+            except:
+                continue
+
             path = os.path.join(self._path, c)
             if not os.path.isdir(path):
                 continue
@@ -33,6 +38,9 @@ class Vault:
             # dirvish locks out anyone but owner if it failed
             if s.st_mode == 040700:
                 continue
+
+            # if not os.path.exists(os.path.join(path, 'tree')):
+            #    continue
 
             # rsync errors can happen for good backups too
             # if glob.glob('%s/rsync_error*' % path):
