@@ -15,7 +15,7 @@ class VaultTestCase(unittest.TestCase):
         v = vault.Vault(os.path.join(os.path.dirname(__file__), 'vault'))
 
         images = v.getImages()
-        self.assertEquals(len(images), 38)
-        self.assertEquals(images[0], '20120731030000')
+        self.assertEquals(len(images), 40)
+        self.assertEquals(images[0], '20111011030000')
 
 

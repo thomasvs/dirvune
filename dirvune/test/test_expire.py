@@ -4,6 +4,7 @@
 
 import os
 import datetime
+import time
 
 import unittest
 
@@ -33,7 +34,9 @@ class ExpirerTestCase(unittest.TestCase):
     def setUp(self):
         testdir = os.path.dirname(__file__)
         self.expirer = expire.Expirer(os.path.join(testdir, 'master.conf'),
-            os.path.join(testdir, 'vault'))
+            os.path.join(testdir, 'vault'),
+            today=datetime.datetime.fromtimestamp(time.mktime(
+                time.strptime("20130419030000", "%Y%m%d%H%M%S"))))
 
 
     def testGetImages(self):

@@ -50,13 +50,14 @@ class Parser(object):
 
 class Expirer(object):
 
-    def __init__(self, config, vaultPath):
+    def __init__(self, config, vaultPath, today=None):
         handle = open(config)
         output = handle.read()
         handle.close()
 
         self.parser = Parser(output)
         self.vault = vault.Vault(vaultPath)
+        self.today = today
 
     def _strToDateTime(self, text):
         t = time.strptime(text, "%Y%m%d%H%M%S")
@@ -73,7 +74,7 @@ class Expirer(object):
         first = self._strToDateTime(got[0])
         last = self._strToDateTime(got[-1])
 
-        desired = self.parser.rules.getImages(first, last)
+        desired = self.parser.rules.getImages(first, last, self.today)
 
         # always keep the first one we have
         result.append([got[0], 'keep', ['first one is always kept']])
