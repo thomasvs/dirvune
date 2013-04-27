@@ -4,6 +4,7 @@ import os
 import sys
 import glob
 import optparse
+import shutil
 
 
 from dirvune import expire, vault
@@ -43,6 +44,9 @@ def main():
         vaults.extend([os.path.dirname(d)
             for d in glob.glob('%s/*/dirvish' % bank)])
 
+    if options.vault:
+        vaults = [v for v in vaults if v.endswith(options.vault)]
+
 
     for path in vaults:
         stdout.write('Examining vault in %s\n' % path)
@@ -57,12 +61,15 @@ def main():
         stdout.write('Keeping %d and deleting %d images\n' % (
             len(keep), len(delete)))
 
-        for i, _, reasons in delete:
+        for i, action, reasons in result:
             p = os.path.join(path, i)
-            if options.dry_run:
-                stdout.write('Dry run, not deleting %s\n' % p)
-            else:
-                stdout.write('Deleting %s\n' % p)
-                assert len(p) > 2
-                os.system('rm -rf %s' % p)
+            if action == 'keep':
+                stdout.write('Keeping               %s\n' % p)
+            elif action == 'delete':
+                if options.dry_run:
+                    stdout.write('Dry run, not deleting %s\n' % p)
+                else:
+                    stdout.write('Deleting              %s\n' % p)
+                    assert len(p) > 2
+                    shutil.rmtree(p)
 main()
